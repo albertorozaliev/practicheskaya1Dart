@@ -66,7 +66,7 @@ void main (List<String> arguments){
     bool otvet = false;
 
     while(otvet==false){
-      print("Добро пожаловать! Напишите размеры поля");
+      print("Добро пожаловать!");
         Game game = Game();
         game.as();
         print("Хотите продолжить? Нажмите '1', если хотите выйти");
@@ -86,7 +86,13 @@ class Game{
   var Flag = Random().nextBool();
   late List<List<int>> ravnoNumber=[];
   bool Win = false;
+  bool vsRobot = false; 
+  final _random = Random();
   void as() {
+    print("Выберите режим:\n1 - Игра против друга\n2 - Игра против робота");
+    final mode = stdin.readLineSync()!;
+    vsRobot = (mode == "2");
+    print("Напишите размеры поля");
     String? a = stdin.readLineSync();
     var el0 = int.parse(a!);
     el = el0 + 1;
@@ -113,26 +119,29 @@ class Game{
     displayStringMatrix();
     
     
-    while (Win==false) {
+    while (Win == false) {
       try {
-        if (Flag==true){
-      print("Сейчас ходит: x");
-    }
-    else{
-      print("Сейчас ходит 0");
-    }
-      print("Номер строки и номер столбца:");
-      String? line_num = stdin.readLineSync();
-      String? column_num = stdin.readLineSync();
-      var line_number = int.parse(line_num!);
+        if (vsRobot && !Flag) {
+        
+          print("Ход робота: ");
+          _robotMove();
+          displayStringMatrix();
+        } else {
 
-      var column_number = int.parse(column_num!);
-      placeSymbol(line_number, column_number);
-      displayStringMatrix();
+          print("Сейчас ходит: ${Flag ? 'x' : '0'}");
+          print("Номер строки и номер столбца:");
+          String? line_num = stdin.readLineSync();
+          String? column_num = stdin.readLineSync();
+          var line_number = int.parse(line_num!);
+          var column_number = int.parse(column_num!);
+          placeSymbol(line_number, column_number);
+          displayStringMatrix();
+        }
       } catch (e) {
         print("Неверно");
       }
     }
+  
 }
 
 
@@ -185,6 +194,16 @@ class Game{
     }
   }
 
+void _robotMove() {
+  int line, column;
+  do {
+
+    line = _random.nextInt(el - 1) + 1; 
+    column = _random.nextInt(el - 1) + 1; 
+  } while (ravnoNumber.any((cell) => cell[0] == line && cell[1] == column));
+  
+  placeSymbol(line, column);
+}
 
   bool check(String symbol){
 
